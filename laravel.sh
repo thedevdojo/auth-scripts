@@ -1,39 +1,12 @@
 #!/bin/bash
 
-if [ ! -d "apps" ]; then
-    mkdir apps
-fi
+# Create a new Laravel application
+./scripts/install-new-laravel-app.sh
 
-## CD into the apps directory
-cd apps
+# Call the external script to setup DevDojo Auth
+./scripts/setup-devdojo-auth.sh
 
-# Remove the existing laravel project directory
-rm -rf laravel
-
-# Create a new Laravel project
-laravel new laravel --no-interaction
-
-# Change to the project directory
-cd laravel
-
-# Require the DevDojo Auth package
-composer require devdojo/auth
-
-# Publish the package assets, config, CI, and migrations
-php artisan vendor:publish --tag=auth:assets
-php artisan vendor:publish --tag=auth:config
-php artisan vendor:publish --tag=auth:ci
-php artisan vendor:publish --tag=auth:migrations
-
-# Run the migrations
-php artisan migrate
-
-# Replace the User model content with the new inheritance from Devdojo\Auth\Models\User
-sed -i '' 's/Illuminate\\Foundation\\Auth\\User as Authenticatable/Devdojo\\Auth\\Models\\User as AuthUser/' app/Models/User.php
-sed -i '' 's/class User extends Authenticatable/class User extends AuthUser/' app/Models/User.php
-
-sed -i '' 's/MAIL_MAILER=log/MAIL_MAILER=smtp/' .env
-sed -i '' 's/MAIL_USERNAME="Laravel"/MAIL_USERNAME=null/' .env
+cd apps/laravel
 
 # Startup the server on localhost
 php artisan serve
