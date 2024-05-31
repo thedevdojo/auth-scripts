@@ -11,7 +11,7 @@ php artisan breeze:install blade --no-interaction
 npm install --silent --no-interaction && npm run dev --silent --no-interaction &
 php artisan migrate
 
-sed -i '' '/require __DIR__.*\/auth.php/d' routes/web.php
+sed -i '' '/Route::middleware('\'guest\'')\->group(function () {/,/});/d' routes/auth.php
 
 cd ../../
 
